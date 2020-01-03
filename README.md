@@ -1,5 +1,6 @@
-# eks-for-rails-app
-rails-appをEKS上にデプロイするためのマニフェストです
+# eks-for-rails-app  
+このレポジトリは[rail-app](https://github.com/YunosukeY/rails-app)をAWS EKS上で動作させるためのインフラをコード化したものです  
+TerraformディレクトリにEKSコンテナを作成するまでに必要なtfファイルが、ルートにデプロイに必要なマニフェストが置いてあります
 
 ## 構築方法
 1. 準備  

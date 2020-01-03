@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: sample-job-migrate
+spec:
+  completions: 1
+  parallelism: 1
+  template:
+    spec:
+      containers:
+        - name: rails-app
+          image: kimitsu/rails-app:v0.0.2
+          command:
+            - /bin/bash
+          args:
+            - -c
+            - rails db:migrate
+          env:
+            - name: DATABASE_URL
+              value: postgres://postgres@sample-service-psql/postgres
+      restartPolicy: Never

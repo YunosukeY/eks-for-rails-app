@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: sample-statefulset-psql-master
+spec:
+  serviceName: sample-statefulset-psql-master
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sample-psql
+      role: master
+  template:
+    metadata:
+      labels:
+        app: sample-psql
+        role: master
+    spec:
+      initContainers:
+        - name: init-chown
+          image: bitnami/postgresql:10.6.0
+          command: ['sh', '-c', 'chmod 777 /bitnami']
+          securityContext: 
+            runAsUser: 0
+          volumeMounts:
+            - name: pgdata
+              mountPath: /bitnami
+              subPath: postgres
+      containers:
+        - name: psql
+          image: bitnami/postgresql:10.6.0
+          volumeMounts:
+            - name: pgdata
+              mountPath: /bitnami
+              subPath: postgres
+          env:
+            - name: POSTGRESQL_REPLICATION_MODE
+              value: master
+            - name: POSTGRESQL_DATABASE
+              value: postgres
+            - name: POSTGRESQL_REPLICATION_USER
+              value: repl_user
+            - name: POSTGRESQL_REPLICATION_PASSWORD
+              value: repl_password
+            - name: POSTGRESQL_USERNAME
+              value: postgres
+  volumeClaimTemplates:
+    - metadata:
+        name: pgdata
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 5Gi
+        storageClassName: gp2
